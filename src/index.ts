@@ -1,18 +1,26 @@
 import express from 'express';
-import dotenv from 'dotenv';
+import { config } from './config/env';
+import healthRoutes from './routes/health'
+import { requestLogger } from './middlewares/logger';
 
-dotenv.config();
 const app = express();
 
-const PORT = process.env.PORT || 3000;
-const APP_NAME = process.env.APP_NAME;
+// Middleware para JSON e Rotas
+app.use(express.json())
+app.use(requestLogger)
+app.use(healthRoutes)
 
 app.get('/', (req, res) => {
   res.json({
-    message: `${APP_NAME} funcionando!`,
+    status: 'ok',
+    messagem: `${config.appName} rodando`
   })
 })
 
-app.listen(PORT, () => {
-  console.log(`${APP_NAME} rodando em http://localhost:${PORT}`);
+app.listen(config.port, () => {
+  console.log(`listen: ${config.appName} rodando na porta ${config.port}`)
 })
+
+
+
+

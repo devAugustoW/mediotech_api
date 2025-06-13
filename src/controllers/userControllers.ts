@@ -30,7 +30,8 @@ export const userController = {
   },
 
   getAllUsers: async(req: Request, res: Response) => {
-    // Método que busca todos os Users
+    try {
+      // Método que busca todos os Users
     const users = await prisma.user.findMany({
       select: {
         id: true,
@@ -45,32 +46,43 @@ export const userController = {
 
     // Resposta
     res.status(200).json(users)
+    } catch (error) {
+      console.log('Erro ao buscar todos os usuários', error);
+      res.status(500).json({ error: 'Erro ao buscar todos os usuários'})
+      
+    }
+    
   },
 
   getUserById: async(req: Request, res: Response) => {
-    // Receber o ID por params
-    const { id } = req.params;
+    try {
+      // Receber o ID por params
+      const { id } = req.params;
 
-    // Validações
+      // Método que busca User pelo ID
+      const user = await prisma.user.findUnique({
+        where: {
+          id: parseInt(id)
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          userImg: true,
+          createdAt: true,
+          updatedAt: true
+        }
+      })
 
-    // Método que busca User pelo ID
-    const user = await prisma.user.findUnique({
-      where: {
-        id: parseInt(id)
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        userImg: true,
-        createdAt: true,
-        updatedAt: true
-      }
-    })
+      // Resposta 
+      res.status(200).json(user)
 
-    // Resposta 
-    res.status(200).json(user)
+    } catch (error) {
+      console.log('erro ao buscar usuário por id', error);
+      res.status(500).json({ erro: 'erro ao buscar usuário por id' })
+      
+    }
   },
 
   updateUser: async(req: Request, res: Response) => {

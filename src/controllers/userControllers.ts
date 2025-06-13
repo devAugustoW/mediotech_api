@@ -5,23 +5,28 @@ const prisma = new PrismaClient();
 
 export const userController = {
   createUser: async (req: Request, res: Response) => {
-    // receber os dados
-    const { name, email, password, role } = req.body;
+    try {
+      // receber os dados
+      const { name, email, password, role } = req.body;
 
-    // validar os dados
+      // método de criação de Tabela User
+      const newUser = await prisma.user.create({
+        data: {
+          name,
+          email,
+          password,
+          role,
+        }
+      })
 
-    // método de criação de Tabela User
-    const newUser = await prisma.user.create({
-      data: {
-        name,
-        email,
-        password,
-        role,
-      }
-    })
-
-    // resposta
-    res.status(201).json(newUser);
+      // Resposta 
+      const { password: _, ...userWithoutPassword } = newUser;
+      res.status(201).json(userWithoutPassword);
+      
+    } catch (error) {
+      console.error('Erro ao criar usuário', error);
+      res.status(500).json({ error: 'Erro ao criar usuário'})
+    }    
   },
 
   getAllUsers: async(req: Request, res: Response) => {
@@ -41,6 +46,7 @@ export const userController = {
     // Resposta
     res.status(200).json(users)
   },
+
   getUserById: async(req: Request, res: Response) => {
     // Receber o ID por params
     const { id } = req.params;
@@ -66,6 +72,7 @@ export const userController = {
     // Resposta 
     res.status(200).json(user)
   },
+
   updateUser: async(req: Request, res: Response) => {
     // Receber o ID por params
     const { id } = req.params;
@@ -90,6 +97,7 @@ export const userController = {
     // Resposta
     res.status(200).json(updateUser);
   },
+
   deleteUser: async(req: Request, res: Response) => {
     // Receber o Id por Params
     const { id } = req.params;

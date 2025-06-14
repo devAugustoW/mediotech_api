@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { passwordHashUtil } from "../util/passwordHashUtil";
 
 const prisma = new PrismaClient();
 
@@ -9,12 +10,15 @@ export const userController = {
       // receber os dados
       const { name, email, password, role } = req.body;
 
+      // Criptografar a senha antes de salvar
+      const hashedPassword = await passwordHashUtil.hashPassword(password);
+
       // método de criação de Tabela User
       const newUser = await prisma.user.create({
         data: {
           name,
           email,
-          password,
+          password: hashedPassword,
           role,
         }
       })
@@ -86,44 +90,74 @@ export const userController = {
   },
 
   updateUser: async(req: Request, res: Response) => {
-    // Receber o ID por params
-    const { id } = req.params;
-    const { name, email, password, role, userImg } = req.body;
+    try {
+      // Receber o ID por params
+      const { id } = req.params;
+      const { name, email, password, role, userImg } = req.body;
 
-    // Validações
-
-    // Método que atualiza o User pelo ID
-    const updateUser = await prisma.user.update({
-      where: {
-        id: parseInt(id)
-      },
-      data:{
+      // Preparar os dados para atualização
+      const updateData: any = {
         name,
         email,
-        password,
         role,
         userImg
-      }
-    });
+      };
 
-    // Resposta
-    res.status(200).json(updateUser);
+      // Se houver nova senha
+      if (password) {
+        updateData.password = await passwordHashUtil.hashPassword(password);
+      }
+
+      // Método que atualiza o User pelo ID
+      const updateUser = await prisma.user.update({
+        where: {
+          id: parseInt(id)
+        },
+        data: updateData,
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          userImg: true,
+          createdAt: true,
+          updatedAt: true
+        }
+      });
+
+      // Resposta
+      res.status(200).json(updateUser);
+
+    } catch (error) {
+      console.log('Erro ao atualizar usuário', error);
+      res.status(500).json({ error: 'Erro ao atualizar usuário'})
+      return;
+    }
+    
   },
 
   deleteUser: async(req: Request, res: Response) => {
-    // Receber o Id por Params
-    const { id } = req.params;
+    try {
+      // Receber o Id por Params
+      const { id } = req.params;
 
-    // Validações
+      // Validações
 
-    // Método que deleta o User pelo ID
-    const deleteUser = await prisma.user.delete({
-      where: {
-        id: parseInt(id)
-      }
-    });
+      // Método que deleta o User pelo ID
+      const deleteUser = await prisma.user.delete({
+        where: {
+          id: parseInt(id)
+        }
+      });
 
-    // resposta
-    res.status(200).json(deleteUser);
+      // resposta
+      res.status(200).json(deleteUser);
+
+    } catch (error) {
+      console.log('Erro ao deletar usuário', error);
+      res.status(500).json({ error: 'Erro ao deletar usuário'})
+      return;
+    }
+   
   }
 };

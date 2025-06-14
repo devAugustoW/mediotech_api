@@ -27,14 +27,13 @@ API RESTful para plataforma educacional desenvolvida com TypeScript e PostgreSQL
 
 ## 🛠️ Instalação
 
-```bash
-# Clone o repositório
+### Clone o repositório
 git clone https://github.com/devAugustoW/mediotech_api.git
 
-# Instale as dependências
+### Instale as dependências
 npm install
 
-# Configure as variáveis de ambiente
+### Configure as variáveis de ambiente
 cp .env.example .env
 
 ```env
@@ -44,13 +43,18 @@ JWT_SECRET="sua_chave_secreta_jwt"
 PORT=3000
 ```
 
-# Execute as migrations
+### Execute as migrations
+```
 npm run db:migrate
+```
 
-# Gere o Prisma Client
+### Gere o Prisma Client
+```
 npm run db:generate
+```
 
-# Inicie o servidor
+### Inicie o servidor
+```
 npm run dev
 ```
 

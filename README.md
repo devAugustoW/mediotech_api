@@ -44,13 +44,19 @@ PORT=3000
 ```
 
 ### Execute as migrations
+```
 npm run db:migrate
+```
 
 ### Gere o Prisma Client
+```
 npm run db:generate
+```
 
 ### Inicie o servidor
+```
 npm run dev
+```
 
 ## 🔗 Endpoints Principais
 

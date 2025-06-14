@@ -1,6 +1,6 @@
 import express from 'express';
 import userRoutes from './routes/userRoutes';
-import authRoutes from './routes/loginRoutes';
+import loginRoutes from './routes/loginRoutes';
 
 const app = express();
 
@@ -10,7 +10,7 @@ app.use(express.json());
 app.use('/api', userRoutes);
 
 // Rotas de autenticação
-app.use('/api', authRoutes);
+app.use('/api', loginRoutes);
 
 
 export default app;

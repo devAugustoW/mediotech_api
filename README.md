@@ -43,13 +43,13 @@ JWT_SECRET="sua_chave_secreta_jwt"
 PORT=3000
 ```
 
-# Execute as migrations
+### Execute as migrations
 npm run db:migrate
 
-# Gere o Prisma Client
+### Gere o Prisma Client
 npm run db:generate
 
-# Inicie o servidor
+### Inicie o servidor
 npm run dev
 
 ## 🔗 Endpoints Principais
